@@ -1,24 +1,25 @@
 #!/usr/bin/env python3
 """
 leitor_logs.py
-Le um ficheiro de log e mostra as primeiras linhas com os campos separados.
-UC01482 - Atividade 3-2
+Engine de parsing para análise estruturada de ficheiros Syslog e Apache.
+Desenvolvido para a Unidade Curricular UC01482 - Cibersegurança.
 """
 
 import re
 import sys
 
-# Padrao para Syslog
+# Padrão RegEx para RFC 5424 (Syslog): Captura Timestamp, Hostname, Serviço e Mensagem
 PADRAO_SYSLOG = re.compile(
     r'^(\w{3}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2})\s+(\S+)\s+(\S+?)(?:\[\d+\])?:\s+(.*)'
 )
 
-# Padrao para Apache Access Log
+# Padrão RegEx para Apache Common Log Format: Captura IP, Timestamp, Método, URL e Status HTTP
 PADRAO_APACHE = re.compile(
     r'^(\S+)\s+\S+\s+\S+\s+\[([^\]]+)\]\s+"(\S+)\s+(\S+)\s+\S+"\s+(\d+)'
 )
 
 def identificar_formato(linha):
+    """Analisa a estrutura da linha para determinar o tipo de log."""
     if PADRAO_SYSLOG.match(linha):
         return "syslog"
     elif PADRAO_APACHE.match(linha):
@@ -27,6 +28,7 @@ def identificar_formato(linha):
         return "desconhecido"
 
 def parsear_syslog(linha):
+    """Extrai metadados de uma linha formatada como Syslog."""
     m = PADRAO_SYSLOG.match(linha)
     if m:
         return {
@@ -38,6 +40,7 @@ def parsear_syslog(linha):
     return {}
 
 def parsear_apache(linha):
+    """Extrai metadados de uma linha formatada como Apache Access Log."""
     m = PADRAO_APACHE.match(linha)
     if m:
         return {
@@ -50,24 +53,26 @@ def parsear_apache(linha):
     return {}
 
 def processar_ficheiro(caminho):
+    """Realiza a leitura do ficheiro e processa as primeiras entradas para validação."""
     try:
         with open(caminho, "r", encoding="utf-8", errors="ignore") as f:
             linhas = f.readlines()
     except FileNotFoundError:
-        print("ERRO: Ficheiro '" + caminho + "' nao encontrado.")
+        print(f"ERRO CRÍTICO: O ficheiro '{caminho}' não foi localizado no diretório.")
         sys.exit(1)
 
-    print("Total de linhas no ficheiro: " + str(len(linhas)))
+    print(f"Análise Iniciada. Total de registos encontrados: {len(linhas)}")
     print("-" * 60)
 
+    # Processamento limitado às primeiras 5 entradas para demonstração de campos
     for i, linha in enumerate(linhas[:5]):
         linha = linha.strip()
         if not linha:
             continue
 
         formato = identificar_formato(linha)
-        print("\nLinha " + str(i+1) + " [" + formato.upper() + "]:")
-        print("  Original: " + linha[:80])
+        print(f"\nRegisto {i+1} [Protocolo: {formato.upper()}]:")
+        print(f"  Raw Data: {linha[:80]}...")
 
         if formato == "syslog":
             campos = parsear_syslog(linha)
@@ -77,16 +82,16 @@ def processar_ficheiro(caminho):
             campos = {}
 
         if campos:
-            print("  Campos extraidos:")
+            print("  Campos Estruturados:")
             for campo, valor in campos.items():
-                print("    " + campo + ": " + valor)
+                print(f"    {campo}: {valor}")
 
     print("\n" + "=" * 60)
-    print("Processamento concluido.")
+    print("Processamento e extração de metadados concluídos com sucesso.")
 
 if __name__ == "__main__":
+    # Interface de Linha de Comando (CLI)
     if len(sys.argv) < 2:
-        print("Uso: python leitor_logs.py <nome_do_ficheiro>")
-        print("Exemplo: python leitor_logs.py auth.log")
+        print("Uso: python leitor_logs.py <ficheiro_de_log>")
         sys.exit(1)
     processar_ficheiro(sys.argv[1])

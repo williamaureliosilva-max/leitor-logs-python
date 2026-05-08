@@ -1,0 +1,7 @@
+Feb 10 08:23:15 servidor01 sshd: Failed password for admin from 10.0.0.50
+Feb 10 08:23:17 servidor01 sshd: Failed password for admin from 10.0.0.50
+Feb 10 08:23:20 servidor01 sshd: Failed password for root from 10.0.0.50
+Feb 10 08:24:01 servidor01 sshd: Accepted password for joao from 192.168.1.10
+Feb 10 09:00:00 servidor01 sudo: joao : TTY=pts/0 ; COMMAND=/bin/bash
+Feb 10 09:15:33 servidor01 cron: (root) CMD (/usr/local/bin/backup.sh)
+Feb 10 10:00:00 servidor01 sshd: Failed password for admin from 203.0.113.5

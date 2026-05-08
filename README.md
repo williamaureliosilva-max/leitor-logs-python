@@ -29,4 +29,4 @@ Este projeto consiste num motor de processamento de logs desenvolvido em **Pytho
 ## 3. Implementação
 O script `leitor_logs.py` utiliza o módulo nativo `re` para compilar padrões de busca otimizados, garantindo alta performance mesmo em volumes de dados consideráveis.
 
-*Desenvolvido no âmbito da Unidade Curricular UC01482 - Cibersegurança.*
+**Instruções de Uso:** Para testar o parser, basta clonar o repositório e executar:python leitor_logs.py auth.log
